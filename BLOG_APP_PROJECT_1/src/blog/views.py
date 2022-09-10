@@ -1,10 +1,10 @@
 import imp
+from multiprocessing import context
+import re
 from django.shortcuts import render, redirect
-from .models import Post
-from .forms import PostForm
+from .models import Post, Like
+from .forms import PostForm, CommentForm
 from django.shortcuts import get_object_or_404
-
-
 
 def post_list(request):
     qs = Post.objects.filter(status='p')
@@ -25,38 +25,31 @@ def post_create(request):
             post.save()
             # messages.success(request, "Post created successfully!")
             return redirect("blog:list")
-    context = {
+    context = { 
         'form' : form
     }
     return render (request, "blog/post_create.html", context)
 
 def post_detail(request, slug):
+    print(request.user)
+    form = CommentForm()
     obj = get_object_or_404(Post, slug=slug)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid:
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = obj
+            comment.save()
+            return redirect("blog:detail", slug=slug)
+            # return redirect(request.path)
     context = {
-        'object' : obj
+        "object" : obj,
+        "form" : form
     }
+    
     return render(request, "blog/post_detail.html", context)
-    #     "form" : form,
-    #     "like_qs" : like_qs,
-    #     'kitap' : comment,
-    #     'kim': kim
-    #  comment = Comment.objects.all( )
-    #  kim = request.user
-    # form = CommentForm()
-    # like_qs = Like.objects.filter(user=request.user, post=obj)
-    # if request.user.is_authenticated:
-    #     PostView.objects.get_or_create(user=request.user, post=obj)
-    # if request.method == "POST":
-    #     form = CommentForm(request.POST)
-    #     if form.is_valid:
-    #         comment = form.save(commit=False)
-    #         comment.user = request.user
-    #         comment.post = obj
-    #         comment.save()
-    #         return redirect("blog:detail", slug=slug)
-    #         # return redirect(request.path)
-
-# @login_required()
+   
 def post_update(request, slug):
     obj = get_object_or_404(Post, slug=slug)
     form = PostForm(request.POST or None, request.FILES or None, instance=obj)
@@ -92,16 +85,31 @@ def post_delete(request, slug):
     return render(request, "blog/post_delete.html", context)
 
 # @login_required()
-# def like(request, slug):
-#     if request.method == "POST":
-#         obj = get_object_or_404(Post, slug=slug)
-#         like_qs = Like.objects.filter(user=request.user, post=obj)
-#         if like_qs.exists():
-#             like_qs[0].delete()
-#         else:
-#             Like.objects.create(user=request.user, post=obj)
-#         return redirect("blog:detail", slug=slug)
-#     return redirect("blog:detail", slug=slug)
+
+def like(request, slug):
+    if request.method == "POST":
+        obj = get_object_or_404(Post, slug=slug)
+        like_qs = Like.objects.filter(user=request.user, post=obj)
+        if like_qs.exists():
+            like_qs[0].delete()
+        else:
+            Like.objects.create(user=request.user, post=obj)
+        return redirect("blog:detail", slug=slug)
+    
+    
+    # return redirect("blog:detail", slug=slug)
+
+
+    # "like_qs" : like_qs,
+    #     'kitap' : comment,
+    #     'kim': kim
+    #  comment = Comment.objects.all( )
+    #  kim = request.user
+    # like_qs = Like.objects.filter(user=request.user, post=obj)
+    # if request.user.is_authenticated:
+    #     PostView.objects.get_or_create(user=request.user, post=obj)
+
+# @login_required()
 
 
 #     #    

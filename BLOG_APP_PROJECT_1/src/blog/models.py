@@ -45,6 +45,8 @@ class Post(models.Model):
     
     def comments(self):
         return self.comment_set.all()
+    
+    
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
