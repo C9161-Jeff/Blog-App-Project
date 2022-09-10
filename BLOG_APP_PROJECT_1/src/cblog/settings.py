@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "blog.apps.BlogConfig"
+    #my_apps:
+    "blog.apps.BlogConfig",
+    
+    #third party
+    "crispy_forms"
 ]
 
 MIDDLEWARE = [
@@ -125,3 +129,5 @@ MEDIA_ROOT = BASE_DIR / "media_root"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
