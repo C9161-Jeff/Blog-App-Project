@@ -9,4 +9,4 @@ def create_profile(sender, instance, created, **kwargs):
         Profile.objects.create(user = instance)  
 
 
-
+    #models deki profile page, her user oluşturduğumda otomatik oluşması için signal oluşturduk ==>  #
