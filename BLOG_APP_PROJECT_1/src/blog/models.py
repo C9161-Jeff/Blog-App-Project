@@ -24,7 +24,7 @@ class Post(models.Model):
     image = models.ImageField(upload_to=user_directory_path, default='django.jpg')
     category = models.ForeignKey(Category, on_delete=models.PROTECT, blank=True, null=True)
     publish_date = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+    # last_updated = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=OPTIONS, default='d')
     slug = models.SlugField(blank=True)
@@ -35,7 +35,7 @@ class Post(models.Model):
     
     
     def comment_count(self):
-        return self.comment_set.all().count() #aşağıdaki Comment class(ilk harfini küçülterek)'ındaki bütün özellikleri/ sayısını al demek/
+        return self.comment_set.all().count()
     
     def view_count(self):
         return self.postview_set.all().count()
@@ -45,8 +45,6 @@ class Post(models.Model):
     
     def comments(self):
         return self.comment_set.all()
-    
-    
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
